@@ -636,13 +636,6 @@ mod menu {
         }
     }
 
-    // use super::{MAIN_TEXT_COLOR};
-    // use crate::components::game_menu::menu::{MenuButtonAction, NORMAL_BTN};
-    // use crate::components::game_menu::{create_btn, create_screen_node};
-    // use crate::GameState;
-    // use bevy::{color::palettes::css::BLUE_VIOLET, ecs::spawn::SpawnRelatedBundle, prelude::*};
-    //
-
     fn pause_menu_setup(mut cmds: Commands, asset_server: Res<AssetServer>) {
         fn btn_icon_node() -> Node {
             Node {
