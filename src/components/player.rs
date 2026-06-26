@@ -59,11 +59,12 @@ fn setup(
 
     cmds.insert_resource(PlayerTimer(Timer::from_seconds(0.01, TimerMode::Repeating)));
 
-    let player = Player::new("Tom".into(), 300.);
+    let player = Player::new("Tom".into(), 600.);
 
     cmds.spawn((
-        Mesh2d(meshes.add(Rectangle::new(8., 8.))),
+        Mesh2d(meshes.add(Rectangle::new(24., 24.))),
         MeshMaterial2d(materials.add(Color::from(PURPLE))),
+        Transform::from_translation(Vec3 { x: 0., y: 0., z: 100.}),
         player.clone(),
     ));
 
@@ -139,7 +140,7 @@ fn add_points(
             .pos
             .push(Vec2::new(transform.translation.x, transform.translation.y));
 
-        if player.pos.len() > 50 {
+        if player.pos.len() > 200 {
             player.pos.remove(0);
         }
     }

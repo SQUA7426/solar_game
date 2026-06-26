@@ -6,7 +6,7 @@ fn main() {
     App::new()
         .add_plugins((
             DefaultPlugins
-                .set(ImagePlugin::default_nearest())
+                .set(ImagePlugin::default_linear())
                 .set(WindowPlugin {
                     primary_window: Some(Window {
                         present_mode: PresentMode::AutoNoVsync,

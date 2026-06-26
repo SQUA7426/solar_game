@@ -1,3 +1,5 @@
+use std::fmt::Debug;
+
 use crate::GameState;
 use crate::components::game_menu::INGAME;
 use bevy::{
@@ -21,7 +23,7 @@ struct UpdateTimer(Timer);
 
 fn setup(mut cmds: Commands, assets: Res<AssetServer>) {
     let chunk_size = UVec2::splat(64);
-    let tile_display_size = UVec2::splat(8);
+    let tile_display_size = UVec2::splat(512);
     let tile_data: Vec<Option<TileData>> = (0..chunk_size.element_product())
         .map(|i| Some(TileData::from_tileset_index(i as u16)))
         .collect();
@@ -31,7 +33,7 @@ fn setup(mut cmds: Commands, assets: Res<AssetServer>) {
             chunk_size,
             tile_display_size,
             tileset: assets.load_with_settings(
-                "texture/water_texture.png",
+                "texture/galaxy_texture.png",
                 |settings: &mut ImageLoaderSettings| {
                     settings.array_layout = Some(ImageArrayLayout::RowCount { rows: 4 });
                 },
@@ -39,7 +41,7 @@ fn setup(mut cmds: Commands, assets: Res<AssetServer>) {
             ..default()
         },
         TilemapChunkTileData(tile_data),
-        UpdateTimer(Timer::from_seconds(0.1, TimerMode::Repeating)),
+        UpdateTimer(Timer::from_seconds(0.001, TimerMode::Repeating)),
         Transform::from_translation(Vec3::new(0., 0., -200.)),
     ));
 }
