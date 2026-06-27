@@ -1,7 +1,7 @@
 use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*, window::PresentMode};
 
 use bevy_june_26_jam::{
-    CosmicPlugin, DebugTextPlugin, GameStatePlugin, MousePlugin, PlayerPlugin, TilemapPlugin,
+    CosmicPlugin, DebugTextPlugin, GameStatePlugin, MousePlugin, PlayerPlugin, TilemapPlugin, IngamePlugin
 };
 
 fn main() {
@@ -25,6 +25,7 @@ fn main() {
             TilemapPlugin,
             DebugTextPlugin,
             CosmicPlugin,
+            IngamePlugin,
         ))
         .run();
 }

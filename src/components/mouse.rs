@@ -49,7 +49,6 @@ fn select(
             let (meshes, ce) = query.into();
             // println!("CosmicEntity at pos: {}, radius: {}, mouse_pos: {}", ce.pos, ce.radius, pos);
             if mouse_in_cosmic_entity(pos, ce) {
-                cmds.insert_resource(CosmicEntityClicked { is_clicked: true });
                 // println!("Mouse on CosmicEntity!");
                 if let Some(material) = materials.get_mut(&meshes.0) {
                     material.color = if material.color == Color::linear_rgb(50., 50., 0.) {
@@ -57,7 +56,6 @@ fn select(
                     } else {
                         Color::linear_rgb(50., 50., 0.)
                     };
-                    cmds.insert_resource(CosmicEntityClicked { is_clicked: false });
                 }
             }
         }

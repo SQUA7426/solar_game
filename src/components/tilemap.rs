@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 
 use crate::GameState;
-use crate::components::game_menu::INGAME;
+use crate::components::gui::game_menu::INGAME;
 use bevy::{
     image::{ImageArrayLayout, ImageLoaderSettings},
     prelude::*,

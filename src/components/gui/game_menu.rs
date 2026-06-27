@@ -74,7 +74,7 @@ mod splash {
     use bevy::prelude::*;
 
     use super::GameState;
-    use crate::components::game_menu::create_screen_node;
+    use crate::components::gui::game_menu::create_screen_node;
 
     pub fn splash_plugin(app: &mut App) {
         app.add_systems(OnEnter(GameState::Splash), splash_setup)
@@ -121,7 +121,7 @@ mod game {
     };
 
     use super::{DisplayQuality, GameState, MAIN_TEXT_COLOR, Volume};
-    use crate::components::game_menu::create_screen_node;
+    use crate::components::gui::game_menu::create_screen_node;
 
     pub fn game_plugin(app: &mut App) {
         app.add_systems(OnEnter(GameState::Game), game_setup)
@@ -211,7 +211,7 @@ mod menu {
     };
 
     use super::MAIN_TEXT_COLOR;
-    use crate::components::game_menu::{
+    use crate::components::gui::game_menu::{
         DisplayQuality, GameState, INGAME, Setting, Volume, create_screen_node, create_btn
     };
 
