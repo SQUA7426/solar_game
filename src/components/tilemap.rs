@@ -35,7 +35,7 @@ fn setup(mut cmds: Commands, assets: Res<AssetServer>) {
             tileset: assets.load_with_settings(
                 "texture/galaxy_texture.png",
                 |settings: &mut ImageLoaderSettings| {
-                    settings.array_layout = Some(ImageArrayLayout::RowCount { rows: 4 });
+                    settings.array_layout = Some(ImageArrayLayout::RowCount { rows: 2 });
                 },
             ),
             ..default()

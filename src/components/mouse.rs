@@ -30,7 +30,6 @@ fn mouse_in_cosmic_entity(mouse_pos: Vec2, ce: &CosmicEntity) -> bool {
 }
 
 fn select(
-    mut cmds: Commands,
     cam: Single<(&Camera, &GlobalTransform), With<Camera2d>>,
     query_mesh_ce: Option<Query<(&MeshMaterial2d<ColorMaterial>, &CosmicEntity), With<CosmicEntity>>>,
     mouse_btn: Res<ButtonInput<MouseButton>>,

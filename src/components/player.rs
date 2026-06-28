@@ -1,9 +1,6 @@
 use bevy::{
     color::palettes::basic::PURPLE,
-    prelude::{
-        ops::{powf},
-        *,
-    },
+    prelude::{ops::powf, *},
 };
 
 use crate::GameState;
@@ -36,7 +33,7 @@ impl Player {
 }
 
 #[derive(Resource)]
-pub struct PlayerTimer(Timer);
+pub struct PlayerPositionTimer(Timer);
 
 #[derive(Debug)]
 pub struct PlayerPlugin;
@@ -56,15 +53,18 @@ fn setup(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
-
-    cmds.insert_resource(PlayerTimer(Timer::from_seconds(0.01, TimerMode::Repeating)));
+    cmds.insert_resource(PlayerPositionTimer(Timer::from_seconds(0.01, TimerMode::Repeating)));
 
     let player = Player::new("Tom".into(), 600.);
 
     cmds.spawn((
         Mesh2d(meshes.add(Rectangle::new(24., 24.))),
         MeshMaterial2d(materials.add(Color::from(PURPLE))),
-        Transform::from_translation(Vec3 { x: 0., y: 0., z: 100.}),
+        Transform::from_translation(Vec3 {
+            x: 0.,
+            y: 0.,
+            z: 100.,
+        }),
         player.clone(),
     ));
 
@@ -72,7 +72,7 @@ fn setup(
     cmds.spawn((
         Text::new(
             "USE WASD to move PLAYER.\n\
-            use R to Reset Player\n\
+            USE R to Reset Player\n\
         USE Period/Comma to ZoomIn/ZoomOut.",
         ),
         Node {
@@ -130,7 +130,7 @@ fn control_player(
 
 fn add_points(
     player_query: Single<(&mut Player, &mut Transform)>,
-    mut timer: ResMut<PlayerTimer>,
+    mut timer: ResMut<PlayerPositionTimer>,
     time: Res<Time>,
 ) {
     let (mut player, transform) = player_query.into_inner();
