@@ -1,6 +1,6 @@
 use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*, window::PresentMode};
 
-use bevy_june_26_jam::{
+use solar_game::{
     CosmicPlugin, DebugTextPlugin, GameStatePlugin, MousePlugin, PlayerPlugin, TilemapPlugin, IngamePlugin
 };
 

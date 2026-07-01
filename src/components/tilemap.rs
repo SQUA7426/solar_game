@@ -18,32 +18,37 @@ impl Plugin for TilemapPlugin {
     }
 }
 
-#[derive(Component, Deref, DerefMut)]
-struct UpdateTimer(Timer);
+// #[derive(Component, Deref, DerefMut)]
+// struct UpdateTimer(Timer);
 
 fn setup(mut cmds: Commands, assets: Res<AssetServer>) {
     let chunk_size = UVec2::splat(64);
     let tile_display_size = UVec2::splat(512);
+
+    // let chunk_size = UVec2::splat(48);
+    // let tile_display_size = UVec2::splat(8);
     let tile_data: Vec<Option<TileData>> = (0..chunk_size.element_product())
         .map(|i| Some(TileData::from_tileset_index(i as u16)))
         .collect();
 
-    cmds.spawn((
-        TilemapChunk {
-            chunk_size,
-            tile_display_size,
-            tileset: assets.load_with_settings(
-                "texture/galaxy_texture.png",
-                |settings: &mut ImageLoaderSettings| {
-                    settings.array_layout = Some(ImageArrayLayout::RowCount { rows: 2 });
-                },
-            ),
-            ..default()
-        },
-        TilemapChunkTileData(tile_data),
-        UpdateTimer(Timer::from_seconds(0.001, TimerMode::Repeating)),
-        Transform::from_translation(Vec3::new(0., 0., -200.)),
-    ));
+    cmds.spawn(
+        (
+            TilemapChunk {
+                chunk_size,
+                tile_display_size,
+                tileset: assets.load_with_settings(
+                    "texture/galaxy_texture.png",
+                    |settings: &mut ImageLoaderSettings| {
+                        settings.array_layout = Some(ImageArrayLayout::RowCount { rows: 2 });
+                    },
+                ),
+                ..default()
+            },
+            TilemapChunkTileData(tile_data.clone()),
+            // UpdateTimer(Timer::from_seconds(0.001, TimerMode::Repeating)),
+            Transform::from_translation(Vec3::new(0., 0., -200.)),
+        ),
+    );
 }
 
 fn pause_in_game(

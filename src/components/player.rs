@@ -41,6 +41,7 @@ pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(OnEnter(GameState::InGame), setup)
+            // .add_plugins(room::room_plugin)
             .add_systems(
                 FixedUpdate,
                 (control_player, add_points, update_cam, update_cam_zoom),
@@ -53,7 +54,10 @@ fn setup(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
-    cmds.insert_resource(PlayerPositionTimer(Timer::from_seconds(0.01, TimerMode::Repeating)));
+    cmds.insert_resource(PlayerPositionTimer(Timer::from_seconds(
+        0.01,
+        TimerMode::Repeating,
+    )));
 
     let player = Player::new("Tom".into(), 600.);
 
@@ -181,3 +185,34 @@ fn update_cam_zoom(
         }
     }
 }
+
+// pub mod room {
+//     use crate::GameState;
+//     use bevy::prelude::*;
+//
+//     pub fn room_plugin(app: &mut App) {
+//         app.add_systems(OnEnter(GameState::InGame), room_setup);
+//     }
+//
+//     fn room_setup(
+//         mut cmds: Commands,
+//         asset_server: Res<AssetServer>,
+//     ) {
+//         [
+//             (100., 20., Vec3::new(0., 0., 0.)),
+//             (20., 100., Vec3::new(0., 60., 0.)),
+//             (20., 100., Vec3::new(50., 0., 0.)),
+//         ]
+//         .into_iter()
+//         .for_each(|(l, w, v)| {
+//             cmds.spawn((
+//                 Sprite {
+//                     image: asset_server.load("texture/water_texture.png"),
+//                     custom_size: Some(Vec2::new(l, w)),
+//                     ..default()
+//                 },
+//                 Transform::from_translation(v),
+//             ));
+//         });
+//     }
+// }
