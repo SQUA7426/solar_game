@@ -14,6 +14,7 @@ pub struct CosmicEntity {
     pub cosmic_essences: Vec<CosmicEssence>,
     pub production_rate: f32,
     pub entity_type: CosmicType,
+    pub selected: bool,
 }
 
 fn produce_rate(radius: f32) -> f32 {
@@ -162,6 +163,7 @@ fn calc_circle(
                 cosmic_essences: Vec::new(),
                 production_rate: produce_rate(avg_radius),
                 entity_type: CosmicType::NeuronStar,
+                selected: false,
             },
             Mesh2d(meshes.add(Circle::new(avg_radius))),
             MeshMaterial2d(materials.add(Color::linear_rgb(50., 50., 0.))),

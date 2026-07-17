@@ -31,7 +31,7 @@ fn mouse_in_cosmic_entity(mouse_pos: Vec2, ce: &CosmicEntity) -> bool {
 
 fn select(
     cam: Single<(&Camera, &GlobalTransform), With<Camera2d>>,
-    query_mesh_ce: Option<Query<(&MeshMaterial2d<ColorMaterial>, &CosmicEntity), With<CosmicEntity>>>,
+    query_mesh_ce: Option<Query<(&MeshMaterial2d<ColorMaterial>, &mut CosmicEntity), With<CosmicEntity>>>,
     mouse_btn: Res<ButtonInput<MouseButton>>,
     window: Single<&Window, With<PrimaryWindow>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
@@ -44,15 +44,17 @@ fn select(
         let Some(pos) = get_cursor_pos(&window, cam) else {
             return;
         };
-        for query in &query_mesh_ce {
-            let (meshes, ce) = query.into();
+        for query in query_mesh_ce {
+            let (meshes, mut ce) = query.into();
             // println!("CosmicEntity at pos: {}, radius: {}, mouse_pos: {}", ce.pos, ce.radius, pos);
-            if mouse_in_cosmic_entity(pos, ce) {
+            if mouse_in_cosmic_entity(pos, &ce) {
                 // println!("Mouse on CosmicEntity!");
                 if let Some(material) = materials.get_mut(&meshes.0) {
                     material.color = if material.color == Color::linear_rgb(50., 50., 0.) {
+                        ce.selected = true;
                         Color::linear_rgb(0., 50., 50.)
                     } else {
+                        ce.selected = false;
                         Color::linear_rgb(50., 50., 0.)
                     };
                 }

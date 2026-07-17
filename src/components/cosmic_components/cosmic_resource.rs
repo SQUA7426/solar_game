@@ -15,3 +15,6 @@ impl CosmicEssence {
 
 #[derive(Resource)]
 pub struct CeCreationTimer(pub Timer);
+
+#[derive(Resource)]
+pub struct CosmicCombineSpinningTimer(pub Timer);

@@ -177,11 +177,11 @@ fn update_cam_zoom(
 
     if let Projection::Orthographic(projection2d) = &mut *projection {
         if input.pressed(KeyCode::Comma) {
-            projection2d.scale *= powf(4.0f32, time.delta_secs());
+            projection2d.scale *= powf(4.0, time.delta_secs());
         }
 
         if input.pressed(KeyCode::Period) {
-            projection2d.scale *= powf(0.25f32, time.delta_secs());
+            projection2d.scale *= powf(0.25, time.delta_secs());
         }
     }
 }

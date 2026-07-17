@@ -17,7 +17,7 @@ mod ingame {
 
     use super::GameState;
     use bevy::prelude::ops::sqrt;
-    use bevy::prelude::*;
+    use bevy::{prelude::*};
     use itertools::Itertools;
 
     const NORMAL_TEXT: Color = Color::srgba(50., 50., 50., 0.75);
@@ -78,8 +78,7 @@ mod ingame {
                 Update,
                 create_combine.run_if(in_state(IngameState::Combine)),
             )
-            .add_systems(Update, display_combine.run_if(in_state(DispCombine)))
-            .add_systems(Update, upgrade_entities.run_if(in_state(DispUpgrade)));
+            .add_systems(Update, display_combine.run_if(in_state(DispCombine)));
     }
 
     fn create_btn(h: f32, w: f32, m: f32, radius: f32) -> Node {
@@ -479,6 +478,7 @@ mod ingame {
         mut ingame_state: ResMut<NextState<IngameState>>,
         mut meshes: ResMut<Assets<Mesh>>,
         mut materials: ResMut<Assets<ColorMaterial>>,
+        time: Res<Time>,
     ) {
         let sel = list_selected_entities_pos(&selected_query);
 
@@ -507,7 +507,7 @@ mod ingame {
                     cc.set_midpoint(centroid);
                     let avg_radius = calc_avg_radius(pos_s, centroid);
 
-                    let Some(selected_query) = selected_query else {
+                    let Some(mut selected_query) = selected_query else {
                         return;
                     };
 
@@ -519,36 +519,26 @@ mod ingame {
                         ))
                         .id();
 
-                    for (e_num, (entity, mut ce, mut transform, meshes)) in
-                        &mut selected_query.into_iter().enumerate()
-                    {
+                    for (e_num, (entity, mut ce, mut transform, meshes)) in &mut selected_query.into_iter().enumerate() {
                         move_cosmic_entity_to_outer_circle(&mut ce, centroid, avg_radius);
-                        // println!("CE pos: {}, {}", ce.clone().pos.x, ce.clone().pos.y);
-                        if ce.selected {
-                            ce.selected = false;
-                            if let Some(material) = materials.get_mut(&meshes.0) {
-                                let idx = i32::from_usize(e_num);
-                                // println!("{:?}", idx);
-                                match idx {
-                                    None => material.color = Color::linear_rgb(0., 0., 0.),
-                                    Some(i) => {
-                                        if i % 2 == 0 {
-                                            material.color = Color::linear_rgb(50., 50., 0.); // YELLOW
-                                        } else {
-                                            material.color = Color::linear_rgb(50., 50., 50.); // WHITE
-                                        }
-                                    }
-                                }
+                        println!("CE pos: {}, {}", ce.clone().pos.x, ce.clone().pos.y);
+                        ce.selected = false;
+                        if let Some(material) = materials.get_mut(&meshes.0) {
+                            if let Some(i32::from_usize(e_num)) {
+
                             }
-
-                            let local_offset = ce.pos - centroid;
-
-                            transform.translation.x = local_offset.x;
-                            transform.translation.y = local_offset.y;
-
-                            cc.push(ce.clone());
-                            cmds.entity(cc_entities).add_child(entity);
+                            material.color = Color::linear_rgb(50., 50., 0.);
                         }
+
+                        let local_offset = ce.pos - centroid;
+
+                        transform.translation += local_offset.x;
+                        transform.translation += local_offset.y;
+                        // println!("Transform: {:?}", transform);
+
+                        // println!("CosmicEntity's pos altered!");
+                        cc.push(ce.clone());
+                        cmds.entity(cc_entities).add_child(entity);
                     }
 
                     cmds.entity(cc_entities).insert(cc);
@@ -560,6 +550,4 @@ mod ingame {
 
         ingame_state.set(IngameState::Default);
     }
-
-    fn upgrade_entities() {}
 }

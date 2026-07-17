@@ -1,7 +1,7 @@
 use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*, window::PresentMode};
 
 use solar_game::{
-    CosmicPlugin, DebugTextPlugin, GameStatePlugin, MousePlugin, PlayerPlugin, TilemapPlugin, IngamePlugin
+    CosmicPlugin, DebugTextPlugin, GameStatePlugin, MousePlugin, PlayerPlugin, TilemapPlugin, IngamePlugin, CosmicCombinePlugin
 };
 
 fn main() {
@@ -25,6 +25,7 @@ fn main() {
             TilemapPlugin,
             DebugTextPlugin,
             CosmicPlugin,
+            CosmicCombinePlugin,
             IngamePlugin,
         ))
         .run();

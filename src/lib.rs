@@ -1,5 +1,6 @@
 pub mod components {
     pub mod cosmic_components {
+        pub mod cosmic_combine;
         pub mod cosmic_entity;
         pub mod cosmic_resource;
         pub mod cosmic_type;
@@ -15,7 +16,7 @@ pub mod components {
 }
 
 pub use components::{
-    cosmic_components::{cosmic_entity::*, cosmic_resource::*, cosmic_type::CosmicType},
+    cosmic_components::{cosmic_combine::*, cosmic_entity::*, cosmic_resource::*, cosmic_type::CosmicType},
     gui::{debug_text::*, game_menu::*, ingame_gui::*},
     mouse::*,
     player::*,
