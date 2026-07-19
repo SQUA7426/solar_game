@@ -79,7 +79,8 @@ mod ingame {
                 create_combine.run_if(in_state(IngameState::Combine)),
             )
             .add_systems(Update, display_combine.run_if(in_state(DispCombine)))
-            .add_systems(Update, upgrade_entities.run_if(in_state(DispUpgrade)));
+            .add_systems(OnEnter(IngameState::Upgrade), upgrade_entities)
+            .add_systems(OnEnter(DispInfo), show_info);
     }
 
     fn create_btn(h: f32, w: f32, m: f32, radius: f32) -> Node {
@@ -301,6 +302,7 @@ mod ingame {
 
             if *interaction == Interaction::None {
                 disp_state.reset();
+                ingame_state.reset();
             }
         }
     }
@@ -558,8 +560,48 @@ mod ingame {
             None => {}
         }
 
-        ingame_state.set(IngameState::Default);
+        ingame_state.reset();
     }
 
-    fn upgrade_entities() {}
+    fn upgrade_entities(
+        mut ingame_state: ResMut<NextState<IngameState>>,
+        ce_query: Option<Query<&mut CosmicEntity>>,
+    ) {
+        let Some(mut ce_query) = ce_query else { return };
+
+        ce_query.iter_mut().for_each(|mut ce| {
+            if ce.selected {
+                ce.entity_type.upgrade();
+            }
+            println!("CE.entity_type after Update: {:?}", ce.entity_type);
+        });
+        ingame_state.reset();
+    }
+
+    fn show_info(
+        mut cmds: Commands,
+        ce_query: Option<Query<&CosmicEntity>>,
+        mut disp_state: ResMut<NextState<DisplayState>>,
+    ) {
+        let Some(ce_query) = ce_query else { return };
+
+        let len = ce_query
+            .iter()
+            .filter(|ce| ce.selected == true)
+            .collect_vec()
+            .len();
+        if len > 1 {
+            return;
+        }
+        ce_query.iter().for_each(|ce| {
+            if ce.clone().selected {
+                cmds.spawn((
+                    DespawnOnExit(DisplayState::DispInfo),
+                    create_node(80., 20., 0., Some(60.), 20., 40.),
+                    BackgroundColor(Color::linear_rgb(0., 0., 0.)),
+                    create_btn_text(format!("{}", ce)),
+                ));
+            }
+        });
+    }
 }

@@ -1,6 +1,7 @@
 use crate::{GameState, Player, components::cosmic_components::cosmic_resource::CeCreationTimer};
 use bevy::prelude::*;
 use rand::prelude::*;
+use std::fmt;
 
 use crate::CosmicEssence;
 use crate::components::cosmic_components::cosmic_type::CosmicType;
@@ -176,5 +177,15 @@ fn calc_circle(
             avg_radius,
             produce_rate(avg_radius)
         );
+    }
+}
+
+impl fmt::Display for CosmicEntity {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "CosmicEntity\nType: {:?}\nPos: x: {}, y:{}\nRadius: {}\nRate: {}",
+            self.entity_type, self.pos.y, self.pos.y, self.radius, self.production_rate
+        )
     }
 }

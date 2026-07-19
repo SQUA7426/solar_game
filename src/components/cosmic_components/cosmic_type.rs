@@ -17,22 +17,31 @@ pub enum CosmicType {
     // other
     Nebula,
     Galaxy,
-    None,
 }
 
 use super::cosmic_type::CosmicType::*;
 impl CosmicType {
-    fn upgrade(&mut self) -> CosmicType {
+    pub fn upgrade(&mut self) -> CosmicType {
         match self {
             NeuronStar => DwarfStar,
             DwarfStar => MidStar,
             MidStar => LargeStar,
 
+            LargeStar => LargeStar,
+
             DwarfPlanet => Planet,
             Planet => HabitablePlanet,
             HabitablePlanet => GasPlanet,
 
-            _ => None,
+            GasPlanet => GasPlanet,
+
+            LowSolarSystem => MidSolarSystem,
+            MidSolarSystem => HighSolarsystem,
+
+            HighSolarsystem => HighSolarsystem,
+
+            Nebula => Nebula,
+            Galaxy => Galaxy,
         }
     }
 }
