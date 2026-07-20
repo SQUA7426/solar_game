@@ -12,13 +12,14 @@ impl Plugin for IngamePlugin {
 }
 
 mod ingame {
-    use crate::{CosmicCombine, CosmicEntity};
-    use rust_decimal::prelude::*;
-
     use super::GameState;
-    use bevy::prelude::ops::sqrt;
-    use bevy::prelude::*;
+    use crate::{
+        ChangeResource, CosmicCombine, CosmicEntity, create_btn, create_btn_text, create_node,
+    };
+    use bevy::prelude::{ops::sqrt, *};
     use itertools::Itertools;
+    use rust_decimal::prelude::*;
+    use std::time::Duration;
 
     const NORMAL_TEXT: Color = Color::srgba(50., 50., 50., 0.75);
     const HOVER_TEXT: Color = Color::linear_rgba(10.5, 0., 5., 0.75);
@@ -69,6 +70,8 @@ mod ingame {
     pub fn ingame_plugin(app: &mut App) {
         app.init_state::<DisplayState>()
             .init_state::<IngameState>()
+            .insert_resource(ChangeResource)
+            .add_systems(OnEnter(DisplayState::All), insert_change_res)
             .add_systems(OnEnter(GameState::InGame), button_setup)
             .add_systems(
                 Update,
@@ -79,57 +82,33 @@ mod ingame {
                 create_combine.run_if(in_state(IngameState::Combine)),
             )
             .add_systems(Update, display_combine.run_if(in_state(DispCombine)))
-            .add_systems(OnEnter(IngameState::Upgrade), upgrade_entities)
-            .add_systems(OnEnter(DispInfo), show_info);
+            .add_systems(
+                Update,
+                upgrade_entities.run_if(in_state(IngameState::Upgrade)),
+            )
+            .add_systems(Update, show_info.run_if(in_state(DispInfo)));
     }
 
-    fn create_btn(h: f32, w: f32, m: f32, radius: f32) -> Node {
-        Node {
-            height: percent(h),
-            width: percent(w),
-            margin: UiRect::all(percent(m)),
-            border_radius: BorderRadius::all(px(radius)),
-            align_self: AlignSelf::Center,
-            justify_content: JustifyContent::Center,
-            justify_items: JustifyItems::Center,
-            align_content: AlignContent::Center,
-            align_items: AlignItems::Center,
-            ..default()
-        }
-    }
-    fn create_btn_text(text: String) -> (Text, TextFont, TextColor) {
-        (
-            Text::new(text),
-            TextFont {
-                font_size: 22.,
-                ..default()
-            },
-            TextColor(NORMAL_TEXT),
-        )
-    }
+    fn insert_change_res(mut cmds: Commands, change_res: Option<Res<ChangeResource>>) {
+        // let Some(_) = change_res else { return };
+        let cr = match change_res {
+            Some(_) => true,
+            None => false,
+        };
 
-    fn create_node(l: f32, r: f32, t: f32, b: Option<f32>, w: f32, h: f32) -> Node {
-        Node {
-            position_type: PositionType::Absolute,
-            align_items: AlignItems::Center,
-            align_content: AlignContent::Center,
-            left: percent(l),
-            right: percent(r),
-            top: percent(t),
-            bottom: match b {
-                Some(bot) => percent(bot),
-                None => Val::Auto,
-            },
-            width: percent(w),
-            height: percent(h),
-            ..default()
+        let mut timer_once = Timer::from_seconds(1., TimerMode::Once);
+        timer_once.tick(Duration::from_secs_f32(1.));
+
+        if timer_once.is_finished() {
+            println!("change res: {}", cr);
+            cmds.insert_resource(ChangeResource);
         }
     }
 
     pub fn button_setup(mut cmds: Commands) {
         cmds.spawn((
             DespawnOnExit(GameState::InGame),
-            create_node(80., 0., 25., Some(25.), 20., 50.),
+            create_node!(80., 0., 25., Some(25.), 20., 50.),
             children![(
                 Node {
                     width: percent(100.),
@@ -165,8 +144,8 @@ mod ingame {
                         (
                             Button,
                             bt,
-                            create_btn(h, w, m, r),
-                            children![(create_btn_text(text.into()), InGameBTNText)],
+                            create_btn!(h, w, m, r),
+                            children![(create_btn_text!(String::from(text)), InGameBTNText)],
                             BackgroundColor(c),
                             Outline {
                                 width: px(6),
@@ -181,7 +160,7 @@ mod ingame {
 
         cmds.spawn((
             DespawnOnExit(GameState::InGame),
-            create_node(30., 30., 80., None, 40., 20.),
+            create_node!(30., 30., 80., None::<f32>, 40., 20.),
             children![(
                 Node {
                     width: percent(100.),
@@ -226,8 +205,8 @@ mod ingame {
                         (
                             Button,
                             bt,
-                            create_btn(h, w, m, r),
-                            children![(create_btn_text(text.into()), InGameBTNText)],
+                            create_btn!(h, w, m, r),
+                            children![(create_btn_text!(text), InGameBTNText)],
                             BackgroundColor(c),
                             Outline {
                                 width: px(6),
@@ -327,7 +306,9 @@ mod ingame {
         mut cmds: Commands,
         // mut disp_state: ResMut<NextState<DisplayState>>,
         selected_query: Option<Query<&CosmicEntity>>,
+        change_res: Option<Res<ChangeResource>>,
     ) {
+        let Some(_) = change_res else { return };
         let mut s = None;
         if selected_query.clone().is_some() {
             s = selected_entities_production_rate(selected_query);
@@ -339,7 +320,7 @@ mod ingame {
 
         cmds.spawn((
             DespawnOnExit(DispCombine),
-            create_node(30., 30., 73., Some(7.), 40., 20.),
+            create_node!(30., 30., 73., Some(7.), 40., 20.),
             // BackgroundColor(Color::srgb(0., 255., 0.)),
             children![(
                 Node {
@@ -357,7 +338,7 @@ mod ingame {
                             (
                                 Button,
                                 bt,
-                                create_btn(h, w, m, r),
+                                create_btn!(h, w, m, r),
                                 children![(
                                     Text::new(text),
                                     TextFont {
@@ -429,21 +410,13 @@ mod ingame {
         d: f32,
     ) -> (Vec2, Vec2) {
         let a = (r1.powi(2) - r2.powi(2) + d.powi(2)) / (2. * d);
-        // println!("a: {}", a);
-        // let b = (r2.powi(2) - r1.powi(2) + d.powi(2)) / 2. * d; TRIANGLE
         let h1 = Decimal::new(r1.powi(2) as i64, 1).to_f32().unwrap();
         let h2 = Decimal::new(a.powi(2) as i64, 1).to_f32().unwrap();
-        // println!("h1: {}, h2: {}", h1, h2);
-        // FAILS
         let h: f32 = sqrt(h1 - h2);
-        // println!("h: {:#?}", h);
 
         let x5 = x1 + a / d * (x2 - x1);
-        // println!("x5: {}", x5);
         let y5 = y1 + a / d * (y2 - y1);
-        // println!("y5: {}", y5);
         let p5: Vec2 = Vec2::new(x5, y5);
-        // println!("p5: {}", p5);
 
         let p3: Vec2 = Vec2::new(
             p5.x - ((h as f32 * (y2 - y1)) / d),
@@ -453,8 +426,6 @@ mod ingame {
             p5.x + ((h as f32 * (y2 - y1)) / d),
             p5.y - ((h as f32 * (x2 - x1)) / d),
         );
-        // println!("p3: {}, {}", p3.x, p3.y);
-        // println!("p4: {}, {}", p4.x, p4.y);
         (p3, p4)
     }
 
@@ -504,7 +475,6 @@ mod ingame {
                 let n = pos_s.len();
 
                 if n > 1 {
-                    // println!("Len > 1...");
                     let centroid = calc_centroid(pos_s.clone());
                     cc.set_midpoint(centroid);
                     let avg_radius = calc_avg_radius(pos_s, centroid);
@@ -525,7 +495,6 @@ mod ingame {
                         &mut selected_query.into_iter().enumerate()
                     {
                         move_cosmic_entity_to_outer_circle(&mut ce, centroid, avg_radius);
-                        // println!("CE pos: {}, {}", ce.clone().pos.x, ce.clone().pos.y);
                         if ce.selected {
                             ce.selected = false;
                             if let Some(material) = materials.get_mut(&meshes.0) {
@@ -564,17 +533,24 @@ mod ingame {
     }
 
     fn upgrade_entities(
+        mut cmds: Commands,
         mut ingame_state: ResMut<NextState<IngameState>>,
+        mut disp_state: ResMut<NextState<DisplayState>>,
         ce_query: Option<Query<&mut CosmicEntity>>,
+        change_res: Option<Res<ChangeResource>>,
     ) {
         let Some(mut ce_query) = ce_query else { return };
-
-        ce_query.iter_mut().for_each(|mut ce| {
-            if ce.selected {
-                ce.entity_type.upgrade();
+        let Some(change_res) = change_res else { return };
+        for mut ce in &mut ce_query {
+            if ce.clone().selected && !change_res.is_changed() {
+                let mut et = ce.entity_type.clone();
+                ce.set_type(et.upgrade());
+                println!("ce type: {:?}", ce.entity_type);
+                cmds.remove_resource::<ChangeResource>();
+                disp_state.set(DisplayState::All);
+                return;
             }
-            println!("CE.entity_type after Update: {:?}", ce.entity_type);
-        });
+        }
         ingame_state.reset();
     }
 
@@ -582,9 +558,13 @@ mod ingame {
         mut cmds: Commands,
         ce_query: Option<Query<&CosmicEntity>>,
         mut disp_state: ResMut<NextState<DisplayState>>,
+        change_res: Option<Res<ChangeResource>>,
     ) {
         let Some(ce_query) = ce_query else { return };
 
+        let Some(_change_res) = change_res else {
+            return;
+        };
         let len = ce_query
             .iter()
             .filter(|ce| ce.selected == true)
@@ -597,10 +577,14 @@ mod ingame {
             if ce.clone().selected {
                 cmds.spawn((
                     DespawnOnExit(DisplayState::DispInfo),
-                    create_node(80., 20., 0., Some(60.), 20., 40.),
+                    create_node!(80., 20., 0., Some(60.), 20., 40.),
                     BackgroundColor(Color::linear_rgb(0., 0., 0.)),
-                    create_btn_text(format!("{}", ce)),
+                    create_btn_text!(format!("{}", ce)),
                 ));
+
+                cmds.remove_resource::<ChangeResource>();
+                disp_state.set(DisplayState::All);
+                return;
             }
         });
     }

@@ -18,6 +18,12 @@ pub struct CosmicEntity {
     pub selected: bool,
 }
 
+impl CosmicEntity {
+    pub fn set_type(&mut self, ct: CosmicType) {
+        self.entity_type = ct;
+    }
+}
+
 fn produce_rate(radius: f32) -> f32 {
     let lower = radius * 0.01;
     let upper = lower + radius * 0.025;

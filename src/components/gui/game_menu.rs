@@ -24,9 +24,6 @@ pub struct Setting<T>(pub T);
 
 #[derive(Component, Resource, Copy, Clone, Debug, Eq, PartialEq)]
 pub struct Volume(pub u32);
-macro_rules! create_components {
-    ($($name:ident),*) => ($(#[derive(Component)] struct $name;)*)
-}
 
 fn create_screen_node() -> Node {
     Node {
@@ -72,6 +69,7 @@ fn setup(mut cmds: Commands) {
 
 mod splash {
     use bevy::prelude::*;
+    use crate::create_components;
 
     use super::GameState;
     use crate::components::gui::game_menu::create_screen_node;
@@ -119,6 +117,7 @@ mod game {
         color::palettes::basic::{BLUE, LIME},
         prelude::*,
     };
+    use crate::create_components;
 
     use super::{DisplayQuality, GameState, MAIN_TEXT_COLOR, Volume};
     use crate::components::gui::game_menu::create_screen_node;
@@ -202,6 +201,7 @@ mod game {
 }
 
 mod menu {
+    use crate::create_components;
 
     use bevy::{
         app::AppExit,

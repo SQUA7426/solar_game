@@ -10,6 +10,7 @@ pub mod components {
         pub mod game_menu;
         pub mod ingame_gui;
     }
+    pub mod macros;
     pub mod mouse;
     pub mod player;
     pub mod tilemap;

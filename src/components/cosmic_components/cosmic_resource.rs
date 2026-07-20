@@ -18,3 +18,6 @@ pub struct CeCreationTimer(pub Timer);
 
 #[derive(Resource)]
 pub struct CosmicCombineSpinningTimer(pub Timer);
+
+#[derive(Resource)]
+pub struct ChangeResource;
